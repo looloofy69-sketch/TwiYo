@@ -44,6 +44,6 @@
 - Fixed a contradictory sample-catalogue state: products marked unavailable can no longer be added from the product detail page or through the cart domain boundary.
 - Centralized cart quantity validation and bounded repeated additions to a maximum of 99; added unit tests for those rules.
 - Added a GitHub Actions workflow to run the demo guardrail, type-check, unit tests, and static build.
-- **Verified locally:** `node scripts/quality-gate.mjs` — 14 checks passed, 0 failed.
-- **Not verified locally:** TypeScript, Vitest, and static build. Installing the pinned package manager failed because this environment could not resolve/reach the npm registry. The workflow must provide the dependency-backed result in GitHub Actions.
+- **Verified in the initial imported-source GitHub Actions run:** demo quality gate, TypeScript, unit tests, and static build passed. The audit branch adds a product-route state guard, invalid cart-merge tests, and a production dependency advisory scan; see the current PR checks for final results.
+- **Not verified locally:** TypeScript, Vitest, and static build. Installing the pinned package manager failed because this environment could not resolve/reach the npm registry. The initial import pull-request workflow supplied the dependency-backed result; the current hardening branch reruns those checks and adds dependency advisory scanning.
 - **Still open:** browser E2E walkthrough at mobile/desktop sizes, keyboard/screen-reader review, image-host reliability review, and final production-domain SEO review.
