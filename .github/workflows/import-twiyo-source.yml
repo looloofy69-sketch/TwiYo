@@ -88,9 +88,13 @@ jobs:
           ci_workflow = root / ".github" / "workflows" / "demo-quality.yml"
           if ci_workflow.is_file():
               ci_content = ci_workflow.read_text(encoding="utf-8")
-              ci_content = ci_content.replace("  push:\\n    branches: [main]\\n", "")
-              ci_content = ci_content.replace("          cache: pnpm\\n", "")
-              ci_workflow.write_text(ci_content, encoding="utf-8")
+              ci_lines = ci_content.splitlines()
+              if "  push:" in ci_lines:
+                  push_index = ci_lines.index("  push:")
+                  if push_index + 1 < len(ci_lines) and ci_lines[push_index + 1] == "    branches: [main]":
+                      del ci_lines[push_index:push_index + 2]
+              ci_lines = [line for line in ci_lines if line != "          cache: pnpm"]
+              ci_workflow.write_text(chr(10).join(ci_lines) + chr(10), encoding="utf-8")
 
           archive_path.unlink()
           file_count = sum(1 for path in root.rglob("*") if path.is_file() and ".git" not in path.parts)
