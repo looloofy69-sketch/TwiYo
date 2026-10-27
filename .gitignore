@@ -114,3 +114,6 @@ client/public/__manus__/version.json
 
 # Workspace bootstrap metadata (not application source)
 .manus-starter-init.json
+
+# Temporary source-import archive; never commit project ZIPs
+TwiYo_GitHub_Import_Package.zip

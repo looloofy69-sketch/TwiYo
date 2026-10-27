@@ -44,6 +44,7 @@
 - Fixed a contradictory sample-catalogue state: products marked unavailable can no longer be added from the product detail page or through the cart domain boundary.
 - Centralized cart quantity validation and bounded repeated additions to a maximum of 99; added unit tests for those rules.
 - Added a GitHub Actions workflow to run the demo guardrail, type-check, unit tests, and static build.
-- **Verified locally:** `node scripts/quality-gate.mjs` — 14 checks passed, 0 failed.
-- **Not verified locally:** TypeScript, Vitest, and static build. Installing the pinned package manager failed because this environment could not resolve/reach the npm registry. The workflow must provide the dependency-backed result in GitHub Actions.
-- **Still open:** browser E2E walkthrough at mobile/desktop sizes, keyboard/screen-reader review, image-host reliability review, and final production-domain SEO review.
+- **Verified in GitHub Actions on the hardening branch:** locked dependency install, demo quality gate (15 checks passed), TypeScript, unit tests, static build, and production dependency audit. The all-severity diagnostic reported `No known vulnerabilities found` after the lockfile was regenerated from patched dependency floors.
+- Product-route state reset and invalid cart-merge input handling have regression coverage. The final PR CI run must pass again after the temporary dependency-repair files are removed.
+- Automated Playwright desktop/mobile journeys and axe scans are now wired into CI. The first axe run exposed serious contrast and accessible-name issues; fixes were applied, and the latest PR run must stay green before merge.
+- **Still open:** manual keyboard/screen-reader review, full WCAG 2.2 AA assessment, image-host reliability, cross-browser coverage, production-domain SEO, and separate production backend security validation.

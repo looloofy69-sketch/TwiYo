@@ -11,5 +11,7 @@ export function normalizeCartQuantity(value: number): number | null {
 }
 
 export function mergeCartQuantity(current: number, requested: number): number {
-  return Math.min(current + requested, MAX_CART_QUANTITY);
+  const safeCurrent = normalizeCartQuantity(current) ?? 0;
+  const safeRequested = normalizeCartQuantity(requested) ?? 0;
+  return Math.min(safeCurrent + safeRequested, MAX_CART_QUANTITY);
 }
