@@ -1,35 +1,35 @@
-# TwiYo repository and demo audit
+# TwiYo repository audit
 
 **Audit date:** 2026-10-27  
-**Audit basis:** user-provided `code.zip` candidate source and GitHub repository metadata.
+**Scope:** repository integrity, static-demo behavior, build/CI hygiene, deployment boundary. This is a source-level review, not a penetration test or legal approval.
 
 ## Repository state
 
-At inspection time, `looloofy69-sketch/TwiYo` existed as a public GitHub repository but had size `0` and no committed source files. The uploaded candidate snapshot contains 143 files before this quality-gate pass. The remote repository therefore cannot be described as patched until the source has been committed and the commit verified on GitHub.
+- The TwiYo source was imported into `main` through [PR #1](https://github.com/looloofy69-sketch/TwiYo/pull/1).
+- The import changed 149 files. The initial pull-request workflow passed dependency installation, the demo quality gate, TypeScript, unit tests, and the static build.
+- The current hardening work is being reviewed separately on `audit/demo-hardening-2026-10`; its checks, including the new dependency advisory audit, are authoritative before merge.
+- The temporary first-import workflow, trigger, shell helper and stale import guide are removed by the hardening branch. A source archive is an input artifact, not application source.
 
-## Changes made to the candidate source
+## Functional changes in the hardening branch
 
-- Added `scripts/quality-gate.mjs` and `pnpm quality:demo` to provide repeatable static checks for route coverage, metadata coverage, simulated-only checkout and enquiry behavior, memory-only cart behavior, unavailable sample items, bounded quantities, draft policies, admin-preview warnings, robots directives, and production URL handling.
-- Prevented sample products marked `sample-unavailable` from being added through the product page or cart domain boundary.
-- Centralized quantity validation and capped quantities at 99, including repeated additions. Added focused unit tests in `client/src/lib/cartRules.test.ts`.
-- Added `docs/DEMO_QUALITY_GATE.md` and a GitHub Actions workflow for dependency-backed verification.
-- Updated the README and TODO to record the test status without claiming unrun checks passed.
+- Product details are remounted when the product slug changes, preventing variant/quantity/added feedback state from leaking between dynamic product routes.
+- Cart quantity merging now normalizes both operands to preserve the bounded integer invariant even when the helper is called directly with invalid values.
+- Unit tests cover invalid merge values, and the static quality gate checks the keyed product route.
 
-## Verification evidence
+## Important boundary and risks
 
-- `node scripts/quality-gate.mjs`: **14 passed, 0 failed**.
-- Cart-rule runtime smoke test using Node.js type stripping: **passed**.
-- `package.json` JSON parsing: **passed**.
-- `pnpm install --frozen-lockfile`, TypeScript checking, Vitest, and static build: **not run to completion**. The environment could not resolve/reach `registry.npmjs.org` (`EAI_AGAIN`) while Corepack attempted to provision pnpm. A passing GitHub Actions run is still needed.
+1. **Static demo versus backend scaffold.** The validated demo path is `pnpm build:static`. The repository also contains starter Express/OAuth/tRPC/Drizzle code. That backend path is not approved for production and must not be deployed until authentication, session lifetime, authorization, request limits, rate limits, secret handling, database and dependency behavior are reviewed.
+2. **Image portability.** Several sample images use `/manus-storage/async-images/...` URLs. CSS fallbacks preserve layout when the host is unavailable, but they do not replace verified, production-controlled assets. Replace with approved local or intentionally hosted assets and test all image responses before launch.
+3. **Accessibility/browser validation.** CI checks types and static output but does not exercise visual states in real browsers, screen readers, touch targets, or keyboard-only flows. Run a documented manual/automated accessibility and end-to-end review before launch.
+4. **Business readiness.** Catalogue, currency, prices, services, fulfilment, payment, support identity, market-specific policies and a production domain remain unapproved. The demo must remain non-transactional.
 
-## Existing risks and follow-up work
+## Release criteria
 
-1. **Starter scaffold remains:** the candidate snapshot includes `server/`, `drizzle/`, platform-authentication files, tRPC helpers, database dependencies, and server-oriented package scripts despite the approved public site flow being a static frontend demo. They are not wired into the storefront routes inspected, but their presence conflicts with a clean, minimal frontend-only repository boundary. Review and remove or isolate this scaffold in a separate change after checking platform-preview requirements and confirming the static build does not depend on it.
-2. **No browser E2E run yet:** complete the two primary journeys in a browser: Home → Shop → Product → Cart → Simulated Checkout → Fake Confirmation, and Services → Service Detail → Enquiry → Explicit Non-sent Confirmation.
-3. **Accessibility/performance remain open:** inspect keyboard-only navigation, focus order, form errors, screen-reader announcements, 320px/mobile layout, contrast, reduced motion, and image loading. Measure performance in a representative environment.
-4. **External sample assets:** image URLs point at draft/managed storage locations. Verify availability and replace with approved assets before launch.
-5. **Launch remains blocked by business decisions:** real identity, market/currency, catalogue, service terms, fulfilment, payments, contact channels, reviewed policies, operational integrations, and production domain remain unapproved.
+- All GitHub Actions checks on the current hardening PR pass, including production dependency advisory scanning.
+- No temporary bootstrap artifacts remain in the default source tree.
+- Static build and output routes remain valid.
+- Browser-based walkthrough and WCAG 2.2 AA review are completed.
+- Production-domain metadata and approved assets are provided only after the business decisions are settled.
+- Any backend deployment receives a separate, evidence-backed security review.
 
-## Conclusion
-
-The candidate now has a repeatable lightweight demo guardrail and a clear correction for the mismatch between sample availability and cart behavior. This is a meaningful demo-quality improvement, not production approval. Do not publish live commerce or represent the demo as operating a real business until the outstanding decisions and validations are complete.
+**Status:** source is in GitHub and the static demo baseline has passed CI. This report does not claim production readiness.
