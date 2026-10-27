@@ -32,3 +32,8 @@ The gate is intentionally not a source-code security scanner. Passing it does no
 - Draft policy copy requires market-specific business and legal review.
 - The admin page is a public, non-operational visual mockup; it is not authentication or an authorization boundary.
 - Final browser testing, accessibility review, image-host reliability, and production-domain SEO review remain launch tasks.
+
+
+## CI policy
+
+The GitHub Actions workflow runs on pull requests and pushes to `main`. It installs the exact lockfile, runs this guardrail, audits production dependency advisories at high severity or above, type-checks, runs unit tests, and builds the static preview. A passing static guardrail is not a security certification; the dependency audit also does not replace a source review or browser-based tests.
