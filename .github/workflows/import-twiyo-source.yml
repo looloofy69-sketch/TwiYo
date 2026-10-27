@@ -2,6 +2,10 @@ name: Import TwiYo source archive
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/run-twiyo-source-import"
 
 permissions:
   contents: write
