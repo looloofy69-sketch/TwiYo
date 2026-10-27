@@ -54,7 +54,7 @@ test("available sample can move through cart and fake checkout without creating 
   await expect(page.getByRole("heading", { name: /This is a demo/ })).toBeVisible();
   await expect(page.locator(".confirmation-card")).toContainText("No payment was taken");
   await expect(page.getByText("FAKE REFERENCE")).toBeVisible();
-  await followPrimaryNav(page, /Bag, 0 sample items/);
+  await followPrimaryNav(page, /Bag 0 sample items/);
   await expect(page.getByRole("heading", { name: "Your demo bag is empty." })).toBeVisible();
 });
 
