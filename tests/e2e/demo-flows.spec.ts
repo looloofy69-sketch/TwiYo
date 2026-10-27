@@ -36,7 +36,7 @@ test("available sample can move through cart and fake checkout without creating 
   await page.getByRole("button", { name: /Add sample to demo bag/ }).click();
   await expect(page.getByRole("button", { name: /Added to demo bag/ })).toBeVisible();
 
-  await followPrimaryNav(page, /Cart, 3 sample items/);
+  await followPrimaryNav(page, /Bag, 3 sample items/);
   await expect(page.getByRole("heading", { name: "Your sample picks." })).toBeVisible();
   await expect(page.locator(".cart-row")).toHaveCount(1);
   await expect(page.locator(".cart-row__body")).toContainText("Cobalt");
@@ -54,7 +54,7 @@ test("available sample can move through cart and fake checkout without creating 
   await expect(page.getByRole("heading", { name: /This is a demo/ })).toBeVisible();
   await expect(page.locator(".confirmation-card")).toContainText("No payment was taken");
   await expect(page.getByText("FAKE REFERENCE")).toBeVisible();
-  await followPrimaryNav(page, /Cart, 0 sample items/);
+  await followPrimaryNav(page, /Bag, 0 sample items/);
   await expect(page.getByRole("heading", { name: "Your demo bag is empty." })).toBeVisible();
 });
 
