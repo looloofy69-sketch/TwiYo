@@ -7,7 +7,7 @@
 
 The **static demo boundary is clearly implemented**: checkout has no payment fields or network submission, the cart is React-memory state, order references are fake, and enquiry submission only changes local UI state. The original source import passed dependency installation, route/demo checks, TypeScript, unit tests, and the static build in GitHub Actions.
 
-The main release risks are deployment ambiguity (a starter server scaffold sits beside the static demo), external image-host portability, and missing browser-based accessibility/E2E evidence. Those are separate from whether the sample UI renders.
+The dependency review has now been resolved for the current lockfile: on 2026-10-27, `pnpm audit --prod --audit-level=low` reported **No known vulnerabilities found**. The same GitHub Actions run passed the demo quality gate, TypeScript, unit tests, and the static build. This is a point-in-time advisory scan of the resolved production dependency graph, not a penetration test. The remaining release risks are deployment ambiguity (a starter server scaffold sits beside the static demo), external image-host portability, and missing browser-based accessibility/E2E evidence.
 
 ## Findings and disposition
 
@@ -30,7 +30,7 @@ The main release risks are deployment ambiguity (a starter server scaffold sits 
 - Complete keyboard-only and screen-reader review, focus visibility, contrast, touch target, error-message and reduced-motion checks against WCAG 2.2 AA.
 - Test image loading/offline behavior and page metadata on the intended host. Canonical URLs and production social URLs should remain unset until a real domain is approved.
 - Confirm that `pnpm audit --prod --audit-level=high` passes in the current branch CI and triage any findings before merging.
-- Conduct separate security testing if the Express/OAuth/Drizzle scaffold is intentionally activated. The current audit does not treat passing static-demo checks as evidence that this backend is safe.
+- Conduct separate security testing if the Express/OAuth/Drizzle scaffold is intentionally activated. The clean production dependency audit reduces known package-advisory risk but does not establish that the backend is configured securely or appropriate for production.
 
 ## Evidence boundaries
 
