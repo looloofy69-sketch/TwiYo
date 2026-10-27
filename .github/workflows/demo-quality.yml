@@ -1,0 +1,38 @@
+name: TwiYo demo quality
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.0
+          run_install: false
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check demo boundaries and routes
+        run: pnpm quality:demo
+
+      - name: Type-check
+        run: pnpm check
+
+      - name: Run unit tests
+        run: pnpm test
+
+      - name: Build static preview
+        run: pnpm build:static
