@@ -1,1 +1,0 @@
-One-time bootstrap trigger for the reviewed TwiYo source archive import. The import workflow preserves this marker and opens a pull request; it does not merge the application automatically.
