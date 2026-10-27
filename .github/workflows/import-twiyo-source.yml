@@ -81,6 +81,17 @@ jobs:
               else:
                   shutil.copy2(source, destination)
 
+          # The GitHub runner token cannot push a workflow-file change without the
+          # separate "workflows" permission. The repository CI workflow is provisioned
+          # independently through the contents API, so normalize the bundled copy to
+          # match that pre-provisioned file before creating the source PR.
+          ci_workflow = root / ".github" / "workflows" / "demo-quality.yml"
+          if ci_workflow.is_file():
+              ci_content = ci_workflow.read_text(encoding="utf-8")
+              ci_content = ci_content.replace("  push:\\n    branches: [main]\\n", "")
+              ci_content = ci_content.replace("          cache: pnpm\\n", "")
+              ci_workflow.write_text(ci_content, encoding="utf-8")
+
           archive_path.unlink()
           file_count = sum(1 for path in root.rglob("*") if path.is_file() and ".git" not in path.parts)
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
