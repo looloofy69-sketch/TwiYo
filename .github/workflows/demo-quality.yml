@@ -1,23 +1,30 @@
 name: TwiYo demo quality
 
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
+          package-manager-cache: false
 
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 10.18.0
           run_install: false
@@ -27,6 +34,9 @@ jobs:
 
       - name: Check demo boundaries and routes
         run: pnpm quality:demo
+
+      - name: Audit production dependency advisories
+        run: pnpm audit --prod --audit-level=high
 
       - name: Type-check
         run: pnpm check
