@@ -44,6 +44,7 @@
 - Fixed a contradictory sample-catalogue state: products marked unavailable can no longer be added from the product detail page or through the cart domain boundary.
 - Centralized cart quantity validation and bounded repeated additions to a maximum of 99; added unit tests for those rules.
 - Added a GitHub Actions workflow to run the demo guardrail, type-check, unit tests, and static build.
-- **Verified in the initial imported-source GitHub Actions run:** demo quality gate, TypeScript, unit tests, and static build passed. The audit branch adds a product-route state guard, invalid cart-merge tests, and a production dependency advisory scan; see the current PR checks for final results.
-- **Not verified locally:** TypeScript, Vitest, and static build. Installing the pinned package manager failed because this environment could not resolve/reach the npm registry. The initial import pull-request workflow supplied the dependency-backed result; the current hardening branch reruns those checks and adds dependency advisory scanning.
+- **Verified in GitHub Actions on the hardening branch:** locked dependency install, demo quality gate (15 checks passed), TypeScript, unit tests, static build, and production dependency audit. The all-severity diagnostic reported `No known vulnerabilities found` after the lockfile was regenerated from patched dependency floors.
+- Product-route state reset and invalid cart-merge input handling have regression coverage. The final PR CI run must pass again after the temporary dependency-repair files are removed.
+- Browser-based E2E/accessibility reviews and production backend security validation remain outstanding; the static CI checks do not certify launch readiness.
 - **Still open:** browser E2E walkthrough at mobile/desktop sizes, keyboard/screen-reader review, image-host reliability review, and final production-domain SEO review.
