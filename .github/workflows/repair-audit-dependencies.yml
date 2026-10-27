@@ -1,0 +1,101 @@
+name: Repair TwiYo audited dependency lock
+
+on:
+  push:
+    branches:
+      - audit/demo-hardening-2026-10
+    paths:
+      - ".github/refresh-dependencies.trigger"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: twiyo-dependency-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out audit branch
+        uses: actions/checkout@v7
+        with:
+          ref: audit/demo-hardening-2026-10
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.18.0
+          run_install: false
+
+      - name: Regenerate the lockfile from approved patched version floors
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Audit production dependencies (do not suppress the report)
+        id: audit
+        continue-on-error: true
+        run: pnpm audit --prod --audit-level=high
+
+      - name: Run demo quality gate
+        id: quality
+        continue-on-error: true
+        run: pnpm quality:demo
+
+      - name: Type-check
+        id: typecheck
+        continue-on-error: true
+        run: pnpm check
+
+      - name: Run unit tests
+        id: tests
+        continue-on-error: true
+        run: pnpm test
+
+      - name: Build the static preview
+        id: build
+        continue-on-error: true
+        run: pnpm build:static
+
+      - name: Commit the regenerated lockfile
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if git diff --quiet -- package.json pnpm-lock.yaml; then
+            echo "No dependency or lockfile changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          git diff --cached --check
+          git commit -m "fix: refresh patched dependency lockfile"
+          git push origin HEAD:refs/heads/audit/demo-hardening-2026-10
+
+      - name: Summarize security and build results
+        if: always()
+        env:
+          AUDIT: ${{ steps.audit.outcome }}
+          QUALITY: ${{ steps.quality.outcome }}
+          TYPECHECK: ${{ steps.typecheck.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
+          BUILD: ${{ steps.build.outcome }}
+        run: |
+          {
+            echo "## TwiYo dependency repair"
+            echo "- Production dependency audit: ${AUDIT:-not run}"
+            echo "- Demo quality gate: ${QUALITY:-not run}"
+            echo "- TypeScript: ${TYPECHECK:-not run}"
+            echo "- Unit tests: ${TESTS:-not run}"
+            echo "- Static build: ${BUILD:-not run}"
+            echo
+            echo "This run reports failures explicitly. Do not merge the audit PR until the production dependency audit has no high/critical advisories and all functional checks pass."
+          } >> "$GITHUB_STEP_SUMMARY"
