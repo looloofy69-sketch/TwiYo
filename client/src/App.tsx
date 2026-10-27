@@ -1,4 +1,4 @@
-import { Route, Switch } from "wouter";
+import { Route, Switch, useParams } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { SiteLayout } from "./components/SiteShell";
 import { CartProvider } from "./contexts/CartContext";
@@ -8,11 +8,16 @@ import { EnquiryPage, ServicePage, ServicesPage } from "./pages/Services";
 import { AboutPage, AdminPreviewPage, ContactPage, PolicyPage } from "./pages/Info";
 import NotFound from "./pages/NotFound";
 
+function ProductRoute() {
+  const { slug = "" } = useParams<{ slug: string }>();
+  return <ProductPage key={slug} />;
+}
+
 function Routes() {
   return <SiteLayout><Switch>
     <Route path="/" component={HomePage}/>
     <Route path="/shop" component={ShopPage}/>
-    <Route path="/products/:slug" component={ProductPage}/>
+    <Route path="/products/:slug" component={ProductRoute}/>
     <Route path="/cart" component={CartPage}/>
     <Route path="/checkout" component={CheckoutPage}/>
     <Route path="/order-confirmation" component={ConfirmationPage}/>
