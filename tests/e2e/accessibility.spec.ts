@@ -4,7 +4,8 @@ import { expect, test, type Page } from "@playwright/test";
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 async function scanPage(page: Page, route: string) {
-  await page.goto(route);
+  // Preserve in-memory cart state when auditing cart and checkout screens.
+  if (new URL(page.url()).pathname !== route) await page.goto(route);
   await expect(page.getByRole("main")).toBeVisible();
 
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
