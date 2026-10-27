@@ -25,7 +25,7 @@ export function Header() {
           <Link href="/services" onClick={close}>Services</Link>
           <Link href="/about" onClick={close}>About</Link>
           <Link href="/contact" onClick={close}>Contact</Link>
-          <Link href="/cart" className="nav-cart" onClick={close} aria-label={`Bag, ${count} sample items`}><ShoppingBag size={17} strokeWidth={1.8} /> <span>Bag</span><span className="cart-count">{count}</span></Link>
+          <Link href="/cart" className="nav-cart" onClick={close} aria-label={`Bag ${count} sample items`}><ShoppingBag size={17} strokeWidth={1.8} /> <span>Bag </span><span className="cart-count">{count}</span></Link>
         </nav>
       </div>
     </header>
