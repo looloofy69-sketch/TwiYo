@@ -59,6 +59,11 @@ check(
   `Missing routes in App.tsx: ${missingRuntimeRoutes.join(", ") || "none"}`,
 );
 check(
+  "Product detail state resets between slugs",
+  app.includes("function ProductRoute()") && app.includes("<ProductPage key={slug} />") && app.includes('path="/products/:slug" component={ProductRoute}'),
+  "The product route must remount its local variant, quantity and added state when the slug changes.",
+);
+check(
   "Static route manifest coverage",
   missingManifestRoutes.length === 0,
   `Missing routes in manus-routes.json: ${missingManifestRoutes.join(", ") || "none"}`,
