@@ -63,7 +63,7 @@ test("non-empty cart and checkout form have no serious or critical WCAG violatio
   await page.getByRole("button", { name: /Add sample to demo bag/ }).click();
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   if (!(await nav.isVisible())) await page.getByRole("button", { name: "Open navigation" }).click();
-  await nav.getByRole("link", { name: /Bag 1 sample items/ }).click();
+  await nav.getByRole("link", { name: /Bag 1 sample item/ }).click();
   await scanPage(page, "/cart");
   await page.getByRole("link", { name: /Try simulated checkout/ }).click();
   await scanPage(page, "/checkout");
