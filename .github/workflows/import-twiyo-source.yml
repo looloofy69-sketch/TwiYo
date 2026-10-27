@@ -126,6 +126,7 @@ jobs:
 
       - name: Open a pull request with the populated source tree
         id: pr
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -156,6 +157,7 @@ jobs:
           TEST_RESULT: ${{ steps.unit_tests.outcome }}
           BUILD_RESULT: ${{ steps.static_build.outcome }}
           PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+          COMPARE_URL: https://github.com/looloofy69-sketch/TwiYo/compare/main...bootstrap/import-twiyo-source?expand=1
         run: |
           {
             echo "## TwiYo source import"
@@ -165,7 +167,11 @@ jobs:
             echo "- TypeScript check: ${TYPECHECK_RESULT:-skipped}"
             echo "- Unit tests: ${TEST_RESULT:-skipped}"
             echo "- Static build: ${BUILD_RESULT:-skipped}"
-            echo "- Pull request: ${PR_URL:-not created; inspect earlier steps}"
+            if [ -n "${PR_URL:-}" ]; then
+              echo "- Pull request: ${PR_URL}"
+            else
+              echo "- Pull request was not created automatically. If the source branch was pushed, create a pull request here: ${COMPARE_URL}"
+            fi
             echo
             echo "Verification steps are allowed to fail independently so the import PR can still be reviewed. Do not merge until failures are understood."
           } >> "$GITHUB_STEP_SUMMARY"
