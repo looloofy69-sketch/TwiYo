@@ -7,7 +7,8 @@
 
 - The TwiYo source was imported into `main` through [PR #1](https://github.com/looloofy69-sketch/TwiYo/pull/1).
 - The import changed 149 files. The initial pull-request workflow passed dependency installation, the demo quality gate, TypeScript, unit tests, and the static build.
-- The current hardening work is being reviewed separately on `audit/demo-hardening-2026-10`; its checks, including the new dependency advisory audit, are authoritative before merge.
+- The hardening branch `audit/demo-hardening-2026-10` regenerated `pnpm-lock.yaml` after applying patched dependency floors and removed the one-time source-import machinery.
+- GitHub Actions passed dependency installation, demo quality gate (15 checks), TypeScript, unit tests, and the static build. The post-fix `pnpm audit --prod --audit-level=low` diagnostic reported **No known vulnerabilities found** for the resolved production dependency graph.
 - The temporary first-import workflow, trigger, shell helper and stale import guide are removed by the hardening branch. A source archive is an input artifact, not application source.
 
 ## Functional changes in the hardening branch
