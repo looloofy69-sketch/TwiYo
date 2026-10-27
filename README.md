@@ -22,9 +22,10 @@ pnpm quality:demo
 pnpm check
 pnpm test
 pnpm build:static
+pnpm test:e2e
 ```
 
-The static build and its route-specific prerendered HTML are written to `dist/public`. GitHub Actions runs the demo quality gate, production-dependency advisory audit, TypeScript check, unit tests, and static build on pull requests and pushes to `main`.
+The static build and its route-specific prerendered HTML are written to `dist/public`. GitHub Actions runs the demo quality gate, production-dependency advisory audit, TypeScript check, unit tests, Playwright browser flows, axe accessibility smoke checks, and static build on pull requests and pushes to `main`.
 
 ## Architecture and deployment boundary
 
