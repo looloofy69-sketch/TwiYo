@@ -7,7 +7,7 @@
 
 The **static demo boundary is clearly implemented**: checkout has no payment fields or network submission, the cart is React-memory state, order references are fake, and enquiry submission only changes local UI state. The original source import passed dependency installation, route/demo checks, TypeScript, unit tests, and the static build in GitHub Actions.
 
-The dependency review has now been resolved for the current lockfile: on 2026-10-27, `pnpm audit --prod --audit-level=low` reported **No known vulnerabilities found**. The same GitHub Actions run passed the demo quality gate, TypeScript, unit tests, and the static build. This is a point-in-time advisory scan of the resolved production dependency graph, not a penetration test. The remaining release risks are deployment ambiguity (a starter server scaffold sits beside the static demo), external image-host portability, and missing browser-based accessibility/E2E evidence.
+The dependency review has now been resolved for the patched lockfile: on 2026-10-27, `pnpm audit --prod --audit-level=low` reported **No known vulnerabilities found**. GitHub Actions passed the demo quality gate, TypeScript, unit tests, and the static build. A real-browser audit was added after the first axe run exposed low-contrast secondary text and accessible-name mismatches; fixes have been applied and must remain green on the final PR head. The package audit is a point-in-time advisory scan, not a penetration test. Remaining release risks include the unapproved starter-server scaffold, external image-host portability, and manual accessibility validation.
 
 ## Findings and disposition
 
@@ -26,10 +26,10 @@ The dependency review has now been resolved for the current lockfile: on 2026-10
 
 ### Additional validation still required
 
-- Run browser end-to-end paths at common mobile and desktop widths: shop search/filter, product variant/quantity, cart edit/remove, simulated checkout, confirmation, service detail, and enquiry query selection.
-- Complete keyboard-only and screen-reader review, focus visibility, contrast, touch target, error-message and reduced-motion checks against WCAG 2.2 AA.
+- Keep the Playwright browser journeys and axe scans green on the final hardening PR head. Current suite covers home/shop navigation, addable and unavailable product behavior, variant/quantity/cart, simulated checkout/fake confirmation, service enquiry preselection, and key route accessibility.
+- Complete a manual keyboard-only and screen-reader review, focus visibility, touch targets, form/error-message behavior, and reduced-motion checks against WCAG 2.2 AA. Automated axe smoke scans are not a conformance audit.
 - Test image loading/offline behavior and page metadata on the intended host. Canonical URLs and production social URLs should remain unset until a real domain is approved.
-- Confirm that `pnpm audit --prod --audit-level=high` passes in the current branch CI and triage any findings before merging.
+- Confirm that `pnpm audit --prod --audit-level=low` reports no known vulnerabilities for the current resolved production graph and that the final lockfile is synced with `package.json`.
 - Conduct separate security testing if the Express/OAuth/Drizzle scaffold is intentionally activated. The clean production dependency audit reduces known package-advisory risk but does not establish that the backend is configured securely or appropriate for production.
 
 ## Evidence boundaries
